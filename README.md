@@ -8,6 +8,8 @@
 An ESP32-based multi-sensor motion-monitoring prototype integrating three MPU6050 accelerometer and gyroscope modules through a TCA9548A I2C multiplexer.
 
 The system acquires motion data from multiple sensor locations, computes acceleration magnitude, performs threshold-based motion classification, and generates buzzer alerts for kick-level events.
+<img width="657" height="733" alt="Screenshot 2025-01-09 095826" src="https://github.com/user-attachments/assets/cac43337-009f-4a05-83d8-fec1be9b7b4a" />
+
 
 ## Problem Statement
 
