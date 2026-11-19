@@ -1,49 +1,145 @@
-# Fetal-Monitoring-System
-### Project Description: Non-Invasive Fetal Movement Monitoring System
 
-This project aims to develop a non-invasive, cost-effective fetal movement monitoring system using the ESP32 microcontroller and MPU6050 accelerometers. The primary objective is to enable pregnant mothers to monitor fetal movements at home, thus ensuring continuous fetal health monitoring without frequent clinical visits. The system is designed to be reliable, low-cost, and user-friendly, providing timely alerts for any abnormal fetal movements.
+# ESP32 Multisensor Fetal Movement Monitor
 
-### Components Used:
-1. **ESP32 Microcontroller:** Serves as the main processing unit and handles Bluetooth communication.
-2. **MPU6050 Accelerometers:** Three accelerometers are used to capture fetal movements.
-3. **TCA9548A I2C Multiplexer:** Allows multiple I2C devices to communicate with the ESP32.
-4. **Bluetooth Module:** Integrated within the ESP32 to transmit data to a mobile application.
-5. **Buzzer:** Provides audible alerts for abnormal conditions.
-6. **3.7V Batteries and BMS Board:** Power the system and manage battery health.
-7. **MIT App Inventor:** Used to develop the mobile application that receives and displays fetal movement data.
+### Distributed Motion Sensing Using I2C Multiplexing
 
-### Step-by-Step Build Process:
+## Overview
 
-1. **Component Integration:**
-   - Connect the MPU6050 accelerometers to the TCA9548A I2C multiplexer, which is then connected to the ESP32's I2C pins (SCL and SDA).
-   - Wire the buzzer to one of the GPIO pins of the ESP32.
+An ESP32-based multi-sensor motion-monitoring prototype integrating three MPU6050 accelerometer and gyroscope modules through a TCA9548A I2C multiplexer.
 
-2. **Power Management:**
-   - Connect two 3.7V batteries in parallel to the BMS board to ensure stable power supply and battery protection.
-   - Power the ESP32 and the connected components from the BMS board.
+The system acquires motion data from multiple sensor locations, computes acceleration magnitude, performs threshold-based motion classification, and generates buzzer alerts for kick-level events.
 
-3. **Sensor Initialization:**
-   - Initialize the I2C communication in the ESP32 code.
-   - Configure and initialize each MPU6050 sensor via the I2C multiplexer.
+## Problem Statement
 
-4. **Data Processing:**
-   - Continuously read acceleration data from each MPU6050 sensor.
-   - Calculate the magnitude of movements and compare them against predefined thresholds for normal, stretching, and kicking movements.
+Multi-location motion sensing can improve the amount of movement information available to an embedded monitoring system.
 
-5. **Bluetooth Communication:**
-   - Establish a Bluetooth connection between the ESP32 and the mobile app.
-   - Continuously send processed data to the mobile app.
+However, identical I2C sensor modules often share the same fixed bus address, preventing multiple devices from operating independently on a single I2C bus.
 
-6. **Alert Mechanism:**
-   - Implement a function to check for abnormal conditions based on movement data.
-   - Trigger the buzzer for an audible alert if abnormal movement is detected.
+## Proposed Solution
 
-7. **Mobile Application:**
-   - Develop a mobile app using MIT App Inventor to display real-time data and alerts.
-   - The app provides an interface for users to monitor fetal movements and receive notifications.
+Integrated three MPU6050 sensors through a TCA9548A I2C multiplexer to enable multiple same-address devices to communicate with one ESP32 controller.
 
-### Final Integration:
-   - Test the entire system to ensure reliable performance.
-   - Optimize the system for power consumption and user-friendliness.
+Each sensor provides three-axis acceleration measurements.
 
-This comprehensive system offers an effective solution for at-home fetal movement monitoring, combining sensor technology with mobile app integration to enhance prenatal care.
+The firmware calculates acceleration magnitude and classifies readings into:
+
+- Normal.
+- Stretching.
+- Kick.
+
+A buzzer is activated for kick-level events, while the system also transmits monitoring data through Bluetooth Serial.
+
+## System Architecture
+
+```text
+MPU6050 - Sensor 1 ──┐
+                     |
+MPU6050 - Sensor 2 ──┼── TCA9548A
+                     |       |
+MPU6050 - Sensor 3 ──┘       |
+                             |
+                             v
+                           ESP32
+                             |
+                 Acceleration Processing
+                             |
+                             v
+                    Motion Classification
+                             |
+                   ┌─────────┴─────────┐
+                   |                   |
+                   v                   v
+                Buzzer           Bluetooth Serial
+```
+
+## Hardware Components
+
+| Component | Function |
+|---|---|
+| ESP32 | Main controller |
+| MPU6050 × 3 | Three-axis motion sensing |
+| TCA9548A | I2C bus multiplexing |
+| Buzzer | Audible event indication |
+
+## Technical Implementation
+
+### 1. Multi-Sensor I2C Integration
+
+Connected three MPU6050 modules through separate TCA9548A multiplexer channels.
+
+This allows identical-address I2C devices to be accessed individually.
+
+### 2. Motion Data Acquisition
+
+Acquired three-axis acceleration measurements from each sensor.
+
+### 3. Acceleration Magnitude
+
+Calculated acceleration magnitude using:
+
+\[
+A = \sqrt{a_x^2+a_y^2+a_z^2}
+\]
+
+### 4. Motion Classification
+
+Implemented threshold-based classification to identify normal, stretching, and kick-level motion patterns.
+
+### 5. Event Indication
+
+Activated a buzzer when kick-level thresholds were detected.
+
+### 6. Wireless Communication
+
+Bridged motion classification results through Bluetooth Serial for external monitoring.
+
+## Key Features
+
+- Three independent MPU6050 sensors.
+- TCA9548A I2C address multiplexing.
+- Multi-location acceleration acquisition.
+- Three-axis acceleration magnitude calculation.
+- Threshold-based motion classification.
+- Buzzer-based event notification.
+- Bluetooth Serial communication.
+
+## Technology Stack
+
+- ESP32.
+- Embedded C / Arduino framework.
+- MPU6050.
+- TCA9548A.
+- I2C.
+- Bluetooth Serial.
+- Accelerometer-based motion processing.
+
+## Project Outcome
+
+Developed a working multi-sensor motion-classification prototype demonstrating address-safe I2C device integration, distributed motion sensing, embedded event detection, and wireless communication.
+
+## Future Enhancements
+
+- Sensor calibration.
+- Adaptive motion thresholds.
+- Sensor fusion.
+- Time-series motion analysis.
+- Wireless mobile application.
+- Data logging and visualization.
+- Improved noise and false-event rejection.
+
+## Applications
+
+- Multi-sensor motion monitoring research.
+- Biomedical instrumentation prototypes.
+- Embedded motion detection.
+- Distributed I2C sensor systems.
+
+## Medical Disclaimer
+
+This is an experimental motion-sensing prototype, not a clinically validated fetal monitoring device. It cannot assess fetal wellbeing, diagnose fetal distress, or replace medical examination and professional fetal monitoring.
+
+---
+
+**Project Category:** ESP32 | Biomedical Instrumentation | Motion Sensing | I2C
+
+**Status:** Working Prototype
